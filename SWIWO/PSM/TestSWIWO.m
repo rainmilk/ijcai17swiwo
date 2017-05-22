@@ -10,6 +10,7 @@ caseData = MakeSWIWODataCases(dataset);
 
 Epoch = 20;
 WtDecay = 0.01;
+ExpDecayRt = 0;
 batchSz = 10;
 nNegItems = 5;
 nUhid = 50; nIHid = 50;
@@ -44,7 +45,7 @@ for ep = 1:Epoch
         % output choice
         [batch, actualSz] = MakePSMMiniBatch(dataset, caseData, negItemPr, nNegItems, i, batchSz);
         [ gradWu, uniUser, gradWi, uniItem, gradWc, uniCh, gradWcNeg, uniChNeg ] = ...
-            SWIWO(batch.Users, batch.Choices, batch.ChoicePos, batch.Items, negItemPr, batch.ItemNSamp, Wu, Wi, Wc);
+            SWIWO(batch.Users, batch.Choices, batch.ChoicePos, batch.Items, negItemPr, batch.ItemNSamp, Wu, Wi, Wc, ExpDecayRt);
         [ grad, Gu(:, uniUser) ] = RMSPropUpdate( gradWu - WtDecay .* Wu(:, uniUser), Gu(:, uniUser));
         Wu(:, uniUser) = Wu(:, uniUser) + grad;
         [ grad, Gi(:, uniItem) ] = RMSPropUpdate( gradWi - WtDecay .* Wi(:, uniItem), Gi(:, uniItem));
